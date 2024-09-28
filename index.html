@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz : Démarche Marketing & Définition des Marchés</title>
+    <style>
+        body {
+            font-family: 'Mayan', sans-serif;
+            margin: 0;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            text-align: center;
+        }
+        .quiz-container, .summary {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            background-image: url('images/back.jpg.webp');
+            background-size: cover;
+            background-position: center;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #000;
+        }
+        .choices {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-left: 20%;
+        }
+        .choices li {
+            margin: 8px 0;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #FF0000;
+            color: white;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #CC0000;
+        }
+        .summary {
+            display: none;
+        }
+        .summary ul {
+            list-style: none;
+            padding: 0;
+        }
+        .summary li {
+            text-align: left;
+            margin-left: 20%;
+            margin-bottom: 10px;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .score {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .quiz-container, .summary {
+                max-width: 90%;
+                margin: 20px auto;
+                padding: 15px;
+                border-radius: 10px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .quiz-container, .summary {
+                padding: 10px;
+                margin: 10px;
+                border-radius: 10px;
+            }
+            .question {
+                font-size: 16px;
+            }
+            button {
+                font-size: 12px;
+                padding: 6px 12px;
+                border-radius: 10px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .quiz-container, .summary {
+                max-width: 800px;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="quiz-container" id="quiz-container">
+    <h2>QCM ENTRAINEMENT - Open Economy and Exchange Rates</h2>
+    <div id="question-container">
+        <!-- Les questions seront affichées ici dynamiquement -->
+    </div>
+    <button id="next-button" onclick="nextQuestion()">Suivant</button>
+</div>
+
+<div class="summary" id="summary">
+    <h3>Récapitulatif</h3>
+    <ul id="summary-list">
+        <!-- Le récapitulatif des réponses sera affiché ici -->
+    </ul>
+    <div class="score" id="score"></div>
+    <button onclick="restartQuiz()">Recommencer</button>
+</div>
+
+<script>
+    const quizData = [
+        { question: "What does openness in goods markets refer to?", choices: ["The ability of consumers and firms to choose between domestic and foreign goods", "The ability of financial investors to buy foreign assets", "The free movement of labor across countries", "The government’s ability to set tariffs on imported goods"], correct: 0 },
+        { question: "What happens when the domestic currency appreciates?", choices: ["The price of foreign goods in terms of the domestic currency increases", "The price of domestic goods in terms of foreign currency decreases", "Domestic goods become more expensive for foreign buyers", "The nominal exchange rate decreases"], correct: 2 },
+        { question: "Which of the following is not a characteristic of a fixed exchange rate regime?", choices: ["The central bank buys and sells its currency to maintain a specific value", "The exchange rate is determined purely by market forces", "The government sets a specific value for its currency against another currency", "Revaluation and devaluation occur in response to changes in the exchange rate"], correct: 1 },
+        { question: "What is the nominal exchange rate?", choices: ["The price of one currency in terms of another", "The relative price of domestic goods to foreign goods", "The rate at which domestic interest rates equal foreign interest rates", "The rate at which foreign labor markets clear"], correct: 0 },
+        { question: "Which factor does not directly affect the real exchange rate?", choices: ["Domestic prices of goods", "Foreign prices of goods", "Changes in nominal exchange rates", "The government’s fiscal policy"], correct: 3 },
+        { question: "What does uncovered interest parity suggest?", choices: ["The nominal interest rates between two countries should equal the real exchange rate", "Domestic interest rates should equal foreign interest rates plus expected exchange rate changes", "There is no difference in default risk between domestic and foreign assets", "Interest rates are higher in countries with higher inflation"], correct: 1 },
+        { question: "If the nominal exchange rate between the dollar and euro changes from $1.07 per €1 to $1.10 per €1, what has happened to the dollar?", choices: ["The dollar has appreciated", "The dollar has depreciated", "The dollar has become more competitive", "The real exchange rate has increased"], correct: 1 },
+        { question: "Which of the following describes a managed float exchange rate regime?", choices: ["The exchange rate is purely determined by supply and demand", "The government or central bank occasionally intervenes to influence the currency’s value", "The central bank pegs the currency to a basket of foreign currencies", "The government sets a fixed exchange rate and maintains it indefinitely"], correct: 1 },
+        { question: "What is included in the current account of a country’s balance of payments?", choices: ["Transactions involving the import and export of goods and services", "Transactions involving the purchase and sale of financial assets", "Foreign direct investment", "Debt forgiveness between countries"], correct: 0 },
+        { question: "Which of the following would increase a country's trade surplus?", choices: ["A decrease in domestic consumption of foreign goods", "An increase in imports", "A depreciation of the domestic currency", "An increase in interest rates"], correct: 2 },
+        { question: "How does a real depreciation of the domestic currency affect the domestic economy?", choices: ["It makes foreign goods cheaper for domestic consumers", "It increases the demand for domestic goods by foreigners", "It decreases the competitiveness of domestic exports", "It leads to higher nominal interest rates"], correct: 1 },
+        { question: "In the context of exchange rates, what is a crawling peg?", choices: ["A fixed exchange rate that is periodically adjusted", "A purely market-determined exchange rate", "A currency that is allowed to fluctuate within a set range", "A system where the exchange rate is adjusted according to inflation"], correct: 0 },
+        { question: "What is the real exchange rate?", choices: ["The price of domestic goods relative to foreign goods", "The interest rate on domestic financial assets", "The nominal exchange rate adjusted for inflation", "The current market value of a foreign currency"], correct: 0 },
+        { question: "What component is not part of the financial account in the balance of payments?", choices: ["Foreign direct investment", "Portfolio investment", "Sale of non-financial assets", "Purchase of foreign bonds"], correct: 2 },
+        { question: "If a country has a persistent current account deficit, what is the likely outcome?", choices: ["The country is exporting more than it is importing", "The country is borrowing from abroad to finance its spending", "The country is running a budget surplus", "The domestic currency is appreciating rapidly"], correct: 1 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let selectedAnswers = [];
+
+    function loadQuestion() {
+        const container = document.getElementById('question-container');
+        container.innerHTML = '';
+
+        const questionData = quizData[currentQuestionIndex];
+        const questionElem = document.createElement('div');
+        questionElem.className = 'question';
+        questionElem.textContent = questionData.question;
+
+        const choicesElem = document.createElement('ul');
+        choicesElem.className = 'choices';
+
+        questionData.choices.forEach((choice, index) => {
+            const choiceElem = document.createElement('li');
+            const choiceInput = document.createElement('input');
+            choiceInput.type = 'radio';
+            choiceInput.name = 'choice';
+            choiceInput.value = index;
+            choiceInput.id = `choice${index}`;
+            
+            const choiceLabel = document.createElement('label');
+            choiceLabel.htmlFor = `choice${index}`;
+            choiceLabel.textContent = choice;
+
+            choiceElem.appendChild(choiceInput);
+            choiceElem.appendChild(choiceLabel);
+            choicesElem.appendChild(choiceElem);
+        });
+
+        container.appendChild(questionElem);
+        container.appendChild(choicesElem);
+    }
+
+    function nextQuestion() {
+        const selectedChoice = document.querySelector('input[name="choice"]:checked');
+        if (!selectedChoice) {
+            alert("Veuillez sélectionner une réponse !");
+            return;
+        }
+
+        selectedAnswers.push(parseInt(selectedChoice.value));
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            showSummary();
+        }
+    }
+
+    function showSummary() {
+        document.getElementById('quiz-container').style.display = 'none';
+        const summary = document.getElementById('summary');
+        summary.style.display = 'block';
+
+        const summaryList = document.getElementById('summary-list');
+        summaryList.innerHTML = '';
+
+        let correctAnswers = 0;
+
+        quizData.forEach((q, index) => {
+            const summaryItem = document.createElement('li');
+            summaryItem.innerHTML = `
+                <strong>${q.question}</strong><br>
+                <div style="text-align: left; margin-left: 20%;">
+                    Votre réponse: ${q.choices[selectedAnswers[index]]} - 
+                    ${selectedAnswers[index] === q.correct ? '<span class="correct">Correct</span>' : '<span class="incorrect">Incorrect</span>'}<br>
+                    Bonne réponse: ${q.choices[q.correct]}
+                </div>
+            `;
+            summaryList.appendChild(summaryItem);
+            if (selectedAnswers[index] === q.correct) {
+                correctAnswers++;
+            }
+        });
+
+        document.getElementById('score').textContent = `Score: ${correctAnswers} / ${quizData.length}`;
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        selectedAnswers = [];
+        document.getElementById('summary').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        loadQuestion();
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+
+
+</html>
